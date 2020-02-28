@@ -1048,7 +1048,6 @@ key() {
 
         # Show file attributes.
         ${FFF_KEY_ATTRIBUTES:=x})
-        echo "${list[scroll]}" >/dev/pts/4
             [[ -e "${list[scroll]}" ]] && {
                 clear_screen
                 status_line "${list[scroll]}"
