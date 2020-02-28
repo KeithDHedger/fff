@@ -735,6 +735,38 @@ cmd_line() {
     printf '\e[2K\e[?25l\e8'
 }
 
+doKeyHelp()
+{
+	local	spacing=${FFF_HELP_SPACING:-24}
+
+	printf "Navigation:\n"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go to child dir:" "${FFF_KEY_CHILD1:-l},Right,Enter,Return" "Go to parent dir:" "${FFF_KEY_PARENT1:-h},Left,Backspace"
+	printf "%-${spacing}s %s\n" "Previous dir:" "${FFF_KEY_PREVIOUS:-"-"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go to top:" "${FFF_KEY_TO_TOP:-"g"}" "Go to bottom:" "${FFF_KEY_TO_BOTTOM:-"G"}"
+
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Scroll down:" "${FFF_KEY_TO_DOWN1:-"j"},Down Arrow" "Scroll up:" "${FFF_KEY_TO_DOWN1:-"k"},Up Arrow"
+
+	printf "%-${spacing}s %s\n" "Enter dir:" "${FFF_KEY_GO_DIR:-":"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go home:" "${FFF_KEY_GO_HOME:-"~"}" "Go to trash:" "${FFF_KEY_GO_TRASH:-"t"}"
+
+	printf "\nFile operations:\n"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Yank:" "${FFF_KEY_YANK:-"y"}" "Yank all:" "${FFF_KEY_YANK_ALL:-"Y"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Move:" "${FFF_KEY_MOVE:-"m"}" "Move all:" "${FFF_KEY_MOVE_ALL:-"M"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Trash:" "${FFF_KEY_TRASH:-"d"}" "Trash all:" "${FFF_KEY_TRASH_ALL:-"D"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Link:" "${FFF_KEY_LINK:-"s"}" "Link all:" "${FFF_KEY_LINK_ALL:-"S"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Bulk rename:" "${FFF_KEY_BULK_RENAME="b"}" "Bulk rename all:" "${FFF_KEY_BULK_RENAME_ALL="B"}"
+
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Paste:" "${FFF_KEY_PASTE="p"}" "Clear:" "${FFF_KEY_CLEAR="c"}"
+	printf "%-${spacing}s %s\n" "Rename:" "${FFF_KEY_RENAME="r"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "New dir:" "${FFF_KEY_MKDIR="n"}" "New file:" "${FFF_KEY_MKFILE="f"}"
+
+	printf "\nMiscellaneous:\n"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Display image:" "${FFF_KEY_IMAGE:-"i"}" "Refresh:" "${FFF_KEY_REFRESH:-"e"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Toggle hidden files:" "${FFF_KEY_HIDDEN:-.}" "File attributes:" "${FFF_KEY_ATTRIBUTES:-"x"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Toggle executable:" "${FFF_KEY_EXECUTABLE:-"X"}" "Search:" "${FFF_KEY_SEARCH:-"/"}"
+	printf "%-${spacing}s %s" "New Shell:" "${FFF_KEY_SHELL:-"!"}"
+}
+
 key() {
     # Handle special key presses.
     [[ $1 == $'\e' ]] && {
@@ -748,6 +780,15 @@ key() {
     }
 
     case ${special_key:-$1} in
+
+        # Show help.
+		"${FFF_KEY_HELP:-"?"}")
+			clear_screen
+			doKeyHelp
+	        read -ern 1
+            redraw
+		;;
+
         # Open list item.
         # 'C' is what bash sees when the right arrow is pressed
         # ('\e[C' or '\eOC').
@@ -979,8 +1020,10 @@ key() {
                 fi
         ;;
 
+
         # Show file attributes.
         ${FFF_KEY_ATTRIBUTES:=x})
+        echo "${list[scroll]}" >/dev/pts/4
             [[ -e "${list[scroll]}" ]] && {
                 clear_screen
                 status_line "${list[scroll]}"
@@ -1053,7 +1096,7 @@ key() {
         # Quit and store current directory in a file for CD on exit.
         # Don't allow user to redefine 'q' so a bad keybinding doesn't
         # remove the option to quit.
-        q)
+        q|$FFF_KEY_QUIT)
             : "${FFF_CD_FILE:=${XDG_CACHE_HOME:=${HOME}/.cache}/fff/.fff_d}"
 
             [[ -w $FFF_CD_FILE ]] &&
@@ -1085,6 +1128,15 @@ main() {
         man fff
         exit
     }
+
+	if [ -e ~/.config/fff/fff.rc ];then
+		. ~/.config/fff/fff.rc
+	else
+		mkdir -p ~/.config/fff/ &>/dev/null
+		touch ~/.config/fff/fff.rc
+#TODO write default
+
+	fi
 
     # Store file name in a file on open instead of using 'FFF_OPENER'.
     # Used in 'fff.vim'.
