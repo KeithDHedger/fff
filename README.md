@@ -321,6 +321,9 @@ export FFF_KEY_EXECUTABLE="X"
 
 # Toggle hidden files.
 export FFF_KEY_HIDDEN="."
+
+# User quit key, doesn't disable 'q'.
+FFF_KEY_QUIT=
 ```
 
 ### Disabling keybindings.

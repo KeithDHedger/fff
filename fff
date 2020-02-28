@@ -1106,6 +1106,7 @@ key() {
 
         # Refresh current dir.
         ${FFF_KEY_REFRESH:=e})
+        	loadConfig
             open "$PWD"
         ;;
 
@@ -1135,6 +1136,18 @@ key() {
     esac
 }
 
+loadConfig()
+{
+	if [ -e ~/.config/fff/fff.rc ];then
+		. ~/.config/fff/fff.rc
+	else
+		mkdir -p ~/.config/fff/ &>/dev/null
+		touch ~/.config/fff/fff.rc
+#TODO write default
+
+	fi
+}
+
 main() {
     # Handle a directory as the first argument.
     # 'cd' is a cheap way of finding the full path to a directory.
@@ -1154,14 +1167,7 @@ main() {
         exit
     }
 
-	if [ -e ~/.config/fff/fff.rc ];then
-		. ~/.config/fff/fff.rc
-	else
-		mkdir -p ~/.config/fff/ &>/dev/null
-		touch ~/.config/fff/fff.rc
-#TODO write default
-
-	fi
+	loadConfig
 
     # Store file name in a file on open instead of using 'FFF_OPENER'.
     # Used in 'fff.vim'.
