@@ -738,33 +738,58 @@ cmd_line() {
 doKeyHelp()
 {
 	local	spacing=${FFF_HELP_SPACING:-24}
+	local	keyout="${XDG_CACHE_HOME}/fff/keyout"
+	local	totlen
+	local	lines=$((max_items-2))
 
-	printf "Navigation:\n"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go to child dir:" "${FFF_KEY_CHILD1:-l},Right,Enter,Return" "Go to parent dir:" "${FFF_KEY_PARENT1:-h},Left,Backspace"
-	printf "%-${spacing}s %s\n" "Previous dir:" "${FFF_KEY_PREVIOUS:-"-"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go to top:" "${FFF_KEY_TO_TOP:-"g"}" "Go to bottom:" "${FFF_KEY_TO_BOTTOM:-"G"}"
+	printf "Navigation:\n" > "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go to child dir:" "${FFF_KEY_CHILD1:-l},Right,Enter,Return" "Go to parent dir:" "${FFF_KEY_PARENT1:-h},Left,Backspace" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Previous dir:" "${FFF_KEY_PREVIOUS:-"-"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go to top:" "${FFF_KEY_TO_TOP:-"g"}" "Go to bottom:" "${FFF_KEY_TO_BOTTOM:-"G"}" >> "$keyout"
 
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Scroll down:" "${FFF_KEY_TO_DOWN1:-"j"},Down Arrow" "Scroll up:" "${FFF_KEY_TO_DOWN1:-"k"},Up Arrow"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Scroll down:" "${FFF_KEY_TO_DOWN1:-"j"},Down Arrow" "Scroll up:" "${FFF_KEY_TO_DOWN1:-"k"},Up Arrow" >> "$keyout"
 
-	printf "%-${spacing}s %s\n" "Enter dir:" "${FFF_KEY_GO_DIR:-":"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go home:" "${FFF_KEY_GO_HOME:-"~"}" "Go to trash:" "${FFF_KEY_GO_TRASH:-"t"}"
+	printf "%-${spacing}s %s\n" "Enter dir:" "${FFF_KEY_GO_DIR:-":"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Go home:" "${FFF_KEY_GO_HOME:-"~"}" "Go to trash:" "${FFF_KEY_GO_TRASH:-"t"}" >> "$keyout"
 
-	printf "\nFile operations:\n"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Yank:" "${FFF_KEY_YANK:-"y"}" "Yank all:" "${FFF_KEY_YANK_ALL:-"Y"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Move:" "${FFF_KEY_MOVE:-"m"}" "Move all:" "${FFF_KEY_MOVE_ALL:-"M"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Trash:" "${FFF_KEY_TRASH:-"d"}" "Trash all:" "${FFF_KEY_TRASH_ALL:-"D"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Link:" "${FFF_KEY_LINK:-"s"}" "Link all:" "${FFF_KEY_LINK_ALL:-"S"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Bulk rename:" "${FFF_KEY_BULK_RENAME="b"}" "Bulk rename all:" "${FFF_KEY_BULK_RENAME_ALL="B"}"
+	printf "\nFavourites:\n" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 1" "$FFF_FAV1" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 2" "$FFF_FAV2" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 3" "$FFF_FAV3" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 4" "$FFF_FAV4" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 5" "$FFF_FAV5" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 6" "$FFF_FAV6" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 7" "$FFF_FAV7" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 8" "$FFF_FAV8" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Key 9" "$FFF_FAV9" >> "$keyout"
 
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Paste:" "${FFF_KEY_PASTE="p"}" "Clear:" "${FFF_KEY_CLEAR="c"}"
-	printf "%-${spacing}s %s\n" "Rename:" "${FFF_KEY_RENAME="r"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "New dir:" "${FFF_KEY_MKDIR="n"}" "New file:" "${FFF_KEY_MKFILE="f"}"
+	printf "\nFile operations:\n" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Yank:" "${FFF_KEY_YANK:-"y"}" "Yank all:" "${FFF_KEY_YANK_ALL:-"Y"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Move:" "${FFF_KEY_MOVE:-"m"}" "Move all:" "${FFF_KEY_MOVE_ALL:-"M"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Trash:" "${FFF_KEY_TRASH:-"d"}" "Trash all:" "${FFF_KEY_TRASH_ALL:-"D"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Link:" "${FFF_KEY_LINK:-"s"}" "Link all:" "${FFF_KEY_LINK_ALL:-"S"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Bulk rename:" "${FFF_KEY_BULK_RENAME="b"}" "Bulk rename all:" "${FFF_KEY_BULK_RENAME_ALL="B"}" >> "$keyout"
 
-	printf "\nMiscellaneous:\n"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Display image:" "${FFF_KEY_IMAGE:-"i"}" "Refresh:" "${FFF_KEY_REFRESH:-"e"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Toggle hidden files:" "${FFF_KEY_HIDDEN:-.}" "File attributes:" "${FFF_KEY_ATTRIBUTES:-"x"}"
-	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Toggle executable:" "${FFF_KEY_EXECUTABLE:-"X"}" "Search:" "${FFF_KEY_SEARCH:-"/"}"
-	printf "%-${spacing}s %s" "New Shell:" "${FFF_KEY_SHELL:-"!"}"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Paste:" "${FFF_KEY_PASTE="p"}" "Clear:" "${FFF_KEY_CLEAR="c"}" >> "$keyout"
+	printf "%-${spacing}s %s\n" "Rename:" "${FFF_KEY_RENAME="r"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "New dir:" "${FFF_KEY_MKDIR="n"}" "New file:" "${FFF_KEY_MKFILE="f"}" >> "$keyout"
+
+	printf "\nMiscellaneous:\n" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Display image:" "${FFF_KEY_IMAGE:-"i"}" "Refresh:" "${FFF_KEY_REFRESH:-"e"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Toggle hidden files:" "${FFF_KEY_HIDDEN:-.}" "File attributes:" "${FFF_KEY_ATTRIBUTES:-"x"}" >> "$keyout"
+	printf "%-${spacing}s %-${spacing}s%-${spacing}s %s\n" "Toggle executable:" "${FFF_KEY_EXECUTABLE:-"X"}" "Search:" "${FFF_KEY_SEARCH:-"/"}" >> "$keyout"
+	printf "%-${spacing}s %s" "New Shell:" "${FFF_KEY_SHELL:-"!"}" >> "$keyout"
+
+	totlen=$(wc -l "$keyout"|awk '{print $1}')
+	
+	for ((j=1;j<totlen;j+=lines+1))
+		do
+			clear_screen
+			sed -n "$j,$((j+lines))p" "$keyout"
+			if (((j+lines)<totlen));then
+				read
+			fi
+		done
 }
 
 key() {

@@ -1,3 +1,4 @@
+Help screen now pages
 Added Changelog
 Added HELP screen, default '?', env var=FFF_KEY_HELP, env var FFF_HELP_SPACING=tab col default 24
 Added FFF_KEY_QUIT env var to define a quit key, 'q' still works
